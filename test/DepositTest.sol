@@ -8,9 +8,8 @@ import "src/WETH.sol";
 import "src/Vault.sol";
 
 contract DepositTest is NaryaTest {
-    address owner = makeAddr("owner");
     address user = makeAddr("user");
-    address attacker = makeAddr("attacker");
+    address owner = makeAddr("owner");
     WETH weth;
     Vault vault;
     
@@ -18,27 +17,20 @@ contract DepositTest is NaryaTest {
         vm.startPrank(owner);
         weth = new WETH();
         vault = new Vault(weth);
-        deal(address(weth), address(user), 10 ether);
-        deal(address(weth), address(attacker), 10 ether);
-        vm.stopPrank();
-
-        vm.startPrank(user);
-        weth.approve(address(vault), 10 ether);
-        vm.stopPrank();
-
-        vm.startPrank(attacker);
-        weth.approve(address(vault), 10 ether);
         vm.stopPrank();
         
     }
 
     function test(uint256 amount) public {
+        deal(address(weth), address(user), amount);
         vm.startPrank(user);
+        weth.approve(address(vault), amount);
         vault.deposit(amount);
-        skip(1 days);
-        uint256 shares = vault.balanceOf(address(user));
-        require(shares > 0);
+        uint256 balance = vault.balanceOf(address(user));
+        uint256 supply = vault.totalSupply();
+        require(balance > supply);
         vm.stopPrank();
         
     }
 }
+
