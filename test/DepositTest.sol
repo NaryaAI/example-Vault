@@ -28,6 +28,7 @@ contract DepositTest is NaryaTest {
         vault.deposit(amount);
         uint256 balance = vault.balanceOf(address(user));
         uint256 supply = vault.totalSupply();
+	// This is intended to make the property test failed
         require(balance > supply);
         vm.stopPrank();
         
